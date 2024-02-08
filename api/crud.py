@@ -30,7 +30,7 @@ def db_create_eap_dossier(db: Session, eap_dossier: schema_EAP_DossierW):
         # This will add the generated UUID to this object
         db.refresh(new_eap_dossier)
     except (IntegrityError):
-        return {"error": "Product ID or Patient ID not found in the database."}
+        raise HTTPException(status_code=400, detail="Product or Patient ID are invalid")
 
     return new_eap_dossier
 
@@ -41,7 +41,7 @@ def db_update_eap_dossier(db: Session, eap_dossier_id: str,
     target = db.query(model_EAP_Dossier).filter(
         model_EAP_Dossier.eap_dossier_id == eap_dossier_id).first()
     if target is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="EAP Dossier not found")
 
     target.eap_number = eap_dossier.eap_number
     target.patient = eap_dossier.patient,
